@@ -1,0 +1,88 @@
+<project name="AntTest" default="run" basedir=".">
+	<description>
+  	AUFGABE: Buildmanagement
+  </description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="VERSION" value="0.0." />
+	<buildnumber file="calciBuild.number" />
+	<property name="java.class.path" location="/Library/Java/JavaVirtualMachines/jdk1.8.0_241.jdk/Contents/Home/jre/lib/rt.jar" />
+
+	<!-- total -->
+	<target name="total" depends="run, test">
+		<echo message="Build wurde TOTAL ausgeführt." />
+	</target>
+
+	<!-- get from git => copy out of eclipse directory -->
+	<target name="get" depends="test">
+		<echo message="Führe GET aus." />
+		<input message="Version Name:" addproperty="versionName" />
+		<mkdir dir="../BUILD/AntTest/${VERSION}${build.number}/src" />
+		<copy todir="../BUILD/AntTest/${VERSION}${build.number}/src">
+			<fileset dir="src/de/drutschmann/ant_test/" />
+		</copy>
+	</target>
+
+	<!-- create build folder get timestamp -->
+	<target name="init" depends="get">
+		<echo message="Führe INIT aus." />
+		<!-- Create the time stamp -->
+		<tstamp>
+			<format property="timestamp" pattern="ddMMyyyy-HHmm" />
+		</tstamp>
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="../BUILD/AntTest/${VERSION}${build.number}/build" />
+	</target>
+
+
+	<!-- compile java -->
+	<target name="compile" depends="init" description="compile the source">
+		<echo message="Führe COMPILE aus." />
+		<!-- Compile the Java code from ${src} into ${build} -->
+		<javac includeantruntime="false" srcdir="../BUILD/AntTest/${VERSION}${build.number}/src" destdir="../BUILD/AntTest/${VERSION}${build.number}/build" />
+	</target>
+
+
+	<!-- test build -->
+	<target name="test" depends="compile">
+		<echo message="Führe TEST aus." />
+		<junit printsummary="yes" haltonfailure="yes">
+			<formatter type="plain" />
+			<test name="de.drutschmann.ant_test.MainTest" />
+		</junit>
+	</target>
+
+
+	<!-- create jar file -->
+	<target name="jar" depends="test" description="generate the distribution">
+		<echo message="Führe JAR aus." />
+		<jar jarfile="../BUILD/AntTest/${VERSION}${build.number}/MyProject-${versionName}.jar" basedir="../BUILD/AntTest/${VERSION}${build.number}/build">
+			<manifest>
+				<attribute name="Main-Class" value="de.drutschmann.ant_test.Main" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- cleanup directories -->
+	<target name="clean" depends="jar" description="clean up">
+		<echo message="Führe CLEAN aus." />
+		<delete dir="../BUILD/AntTest/${VERSION}${build.number}/build" />
+		<delete dir="../BUILD/AntTest/${VERSION}${build.number}/src" />
+	</target>
+
+	<!-- run -->
+	<target name="run" depends="clean">
+		<echo message="Führe RUN aus." />
+		<java jar="../BUILD/AntTest/${VERSION}${build.number}/MyProject-${versionName}.jar" fork="true" />
+	</target>
+
+	<!-- create documentation -->
+	<target name="doc" depends="run">
+		<echo message="Führe DOC aus." />
+		<delete dir="../BUILD/AntTest/${VERSION}${build.number}/doc" />
+		<mkdir dir="../BUILD/AntTest/${VERSION}${build.number}/doc" />
+		<javadoc destdir="../BUILD/AntTest/${VERSION}${build.number}/doc" author="true" private="true" version="true" windowtitle="${ant.project.name}"></javadoc>
+	</target>
+
+
+</project>
