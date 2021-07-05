@@ -14,13 +14,16 @@
 	</target>
 
 	<!-- get from git => copy out of eclipse directory -->
-	<target name="get" depends="test">
+	<target name="get">
 		<echo message="Führe GET aus." />
 		<input message="Version Name:" addproperty="versionName" />
-		<mkdir dir="../BUILD/AntTest/${VERSION}${build.number}/src" />
+		<mkdir dir="../BUILD/AntTest/${VERSION}${build.number}/src/lib" />
 		<copy todir="../BUILD/AntTest/${VERSION}${build.number}/src">
 			<fileset dir="src/de/drutschmann/ant_test/" />
 		</copy>
+		<copy todir="../BUILD/AntTest/${VERSION}${build.number}/src/lib">
+					<fileset dir="lib/" />
+				</copy>
 	</target>
 
 	<!-- create build folder get timestamp -->
@@ -39,7 +42,9 @@
 	<target name="compile" depends="init" description="compile the source">
 		<echo message="Führe COMPILE aus." />
 		<!-- Compile the Java code from ${src} into ${build} -->
-		<javac includeantruntime="false" srcdir="../BUILD/AntTest/${VERSION}${build.number}/src" destdir="../BUILD/AntTest/${VERSION}${build.number}/build" />
+		<javac includeantruntime="false" srcdir="../BUILD/AntTest/${VERSION}${build.number}/src" destdir="../BUILD/AntTest/${VERSION}${build.number}/build" >
+		<include name="/Applications/Eclipse.app/Contents/Eclipse/plugins/*"/>
+		</javac>
 	</target>
 
 
@@ -47,6 +52,7 @@
 	<target name="test" depends="compile">
 		<echo message="Führe TEST aus." />
 		<junit printsummary="yes" haltonfailure="yes">
+			<classpath location="lib/junit-4.13.2.jar" />
 			<formatter type="plain" />
 			<test name="de.drutschmann.ant_test.MainTest" />
 		</junit>

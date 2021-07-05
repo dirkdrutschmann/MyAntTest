@@ -1,21 +1,21 @@
 package de.drutschmann.ant_test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-class MainTest {
+public class MainTest {
 
 	Main main;
 	
-	@BeforeEach
-	void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		 main = new Main();
 	}
 
 	@Test
-	void test() {
+	public void test() {
 		 assertEquals("welcome", main.getWelcomeMessage());
 	}
 
